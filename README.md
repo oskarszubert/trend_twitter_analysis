@@ -1,6 +1,6 @@
 # Analysis of Twitter trending topics
 
-## Funtion:
+## Function:
 Project allows to:
 * collect data from twitter.org, ceneo.pl, yelp.pl
 * create neural network algorithm classification
@@ -15,6 +15,7 @@ Project allows to:
 ## requirements:
 * create twitter app: https://developer.twitter.com/en/apps
 * Morfeusz2.0: http://morfeusz.sgjp.pl/
-* see config/requirements.txt 
+* see config/requirements.txt
 *`Python3.6.5` 
-Author: `Oskar Szubert` \
+
+Author: `Oskar Szubert`
