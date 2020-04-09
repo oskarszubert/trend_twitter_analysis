@@ -1,0 +1,248 @@
+{% extends "layout.html" %}
+{% block content %}
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static" style="background-color: #ffffff">
+          <strong class="d-inline-block mb-2 text-primary">
+            <div class="row">
+              <div class="col-2">
+                {% if twitter_query.filename[0] =='h' %}
+                Hashtag
+                {% elif twitter_query.filename[0] =='w'%}
+                Word
+                {% elif twitter_query.filename[0] =='u' %}
+                User
+                {% endif %}
+              </div>
+              <div class="col-6">
+                <div class="mb-1 text-muted">{{ twitter_query.created_at.strftime('%H:%M  %d/%h/%Y') }}</div>
+              </div>
+            </div>
+          </strong>
+          <h1 class="mb-0">
+            {{ twitter_query.twitter_query }}
+          </h1>
+          <p class="card-text mb-auto">
+            Found: <b>{{ data_from_raport[0] }}</b> of <b>{{ twitter_query.numbers_of_tweets }} tweets. </b>
+            From: <b>{{ data_from_raport[1][0].strftime('%d-%m-%Y') }}</b> to:
+            <b>{{ data_from_raport[1][1].strftime('%d-%m-%Y') }}</b>
+          </p>
+        </div>
+      </div>
+      {% if data_from_raport[5] %}
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static" style="background-color: #ffffff">
+
+          <h3 class="mb-0">{{ data_from_raport[4] }} tweets with location.</h3>
+
+          <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+          <div id="map" style="width: 100%; height: 400px;"></div>
+
+          <script type="text/javascript">
+            var coord = '{{ data_from_raport[5] }}'
+            coord = coord.split('], ');
+
+            for (i = 0; i < coord.length; i++) {
+              coord[i] = coord[i].replace('[', '');
+              coord[i] = coord[i].replace('[', '');
+              coord[i] = coord[i].replace(']', '');
+              coord[i] = coord[i].replace(']', '');
+              coord[i] = coord[i].split(',');
+            }
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 5.5,
+              center: new google.maps.LatLng(52.00, 20.00),
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+
+            var infowindow = new google.maps.InfoWindow();
+
+            var marker, i;
+
+            for (i = 0; i < coord.length; i++) {
+              marker = new google.maps.Marker({
+                position: new google.maps.LatLng(coord[i][1], coord[i][0]),
+                map: map
+              });
+
+              google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                return function () {
+                  infowindow.setContent("Tweet on location: " + coord[i][2]);
+                  infowindow.open(map, marker);
+                }
+              })(marker, i));
+            }
+          </script>
+        </div>
+      </div>
+      {% endif %}
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static" style="background-color: #ffffff">
+          <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+          <script type="text/javascript">
+            google.charts.load("current", { packages: ['corechart'] });
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+
+              var label_0 = '{{ data_from_raport[3][0][0] }}'
+              var part_of_day_0 = parseInt('{{ data_from_raport[3][0][1]/data_from_raport[0] * 100 }}')
+
+              var label_1 = '{{ data_from_raport[3][1][0] }}'
+              var part_of_day_1 = parseInt('{{ data_from_raport[3][1][1]/data_from_raport[0] * 100 }}')
+
+              var label_2 = '{{ data_from_raport[3][2][0] }}'
+              var part_of_day_2 = parseInt('{{ data_from_raport[3][2][1]/data_from_raport[0] * 100 }}')
+
+              var label_3 = '{{ data_from_raport[3][3][0] }}'
+              var part_of_day_3 = parseInt('{{ data_from_raport[3][3][1]/data_from_raport[0] * 100 }}')
+
+              var label_4 = '{{ data_from_raport[3][4][0] }}'
+              var part_of_day_4 = parseInt('{{ data_from_raport[3][4][1]/data_from_raport[0] * 100 }}')
+
+              var data = google.visualization.arrayToDataTable([
+                ["Element", "Percent", { role: "style" }],
+                [label_3, part_of_day_3, "#2e771c"],
+                [label_2, part_of_day_2, "#e2e2e2"],
+                [label_0, part_of_day_0, "#ac3c3c"],
+                [label_1, part_of_day_1, "#f1ef46"],
+                [label_4, part_of_day_4, "#b87333"]
+              ]);
+
+              var view = new google.visualization.DataView(data);
+              view.setColumns([0, 1,
+                {
+                  calc: "stringify",
+                  sourceColumn: 1,
+                  type: "string",
+                  role: "annotation"
+                },
+                2]);
+
+              var options = {
+                title: "Parts of A Day",
+                width: 750,
+                height: 400,
+                bar: { groupWidth: "95%" },
+                legend: { position: "none" },
+              };
+              var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+              chart.draw(view, options);
+            }
+          </script>
+          <div id="columnchart_values" style="width: 100%; " align="center"></div>
+        </div>
+      </div>
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static" style="background-color: #ffffff">
+
+
+
+          <script>
+            window.onload = function () {
+              var source_0 = '{{ data_from_raport[2][0][1]/data_from_raport[0] * 100 }}'
+              var label_0 = '{{ data_from_raport[2][0][0] }}'
+              var source_1 = '{{ data_from_raport[2][1][1]/data_from_raport[0] * 100 }}'
+              var label_1 = '{{ data_from_raport[2][1][0] }}'
+              var source_2 = '{{ data_from_raport[2][2][1]/data_from_raport[0] * 100 }}'
+              var label_2 = '{{ data_from_raport[2][2][0] }}'
+              var source_3 = '{{ data_from_raport[2][3][1]/data_from_raport[0] * 100 }}'
+              var label_3 = '{{ data_from_raport[2][3][0] }}'
+              var source_4 = '{{ data_from_raport[2][4][1]/data_from_raport[0] * 100 }}'
+              var label_4 = '{{ data_from_raport[2][4][0] }}'
+
+              var chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                title: {
+                  text: "Tweet source: "
+                },
+                data: [{
+                  type: "doughnut",
+                  startAngle: 240,
+                  yValueFormatString: "##0.00\"%\"",
+                  indexLabel: "{label} {y}",
+                  dataPoints: [
+                    { y: source_3, label: label_3 },
+                    { y: source_2, label: label_2 },
+                    { y: source_1, label: label_1 },
+                    { y: source_0, label: label_0 },
+                    { y: source_4, label: label_4 }
+                  ]
+                }]
+              });
+              chart.render();
+            }
+          </script>
+          <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+          <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+        </div>
+      </div>
+      {% if not data_from_raport[5] %}
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static" style="background-color: #ffffff">
+          <h3 class="mb-0">No information about user location.</h3>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <div class=" col-md-3">
+      <div class="content-section">
+        {{ form.hidden_tag() }}
+        <form method="POST" action="">
+          <ul class="list-group">
+            <li class="list-group-item list-group-item-light">
+              <div class="form-check">
+                <h3>Sentinent:</h3>
+                {{ form.positive(class="form-check-input") }}
+                {{ form.positive.label(class="form-check-label") }}
+              </div>
+              <div class="form-check">
+                {{ form.neutral(class="form-check-input") }}
+                {{ form.neutral.label(class="form-check-label") }}
+              </div>
+              <div class="form-check">
+                {{ form.negative(class="form-check-input") }}
+                {{ form.negative.label(class="form-check-label") }}
+              </div>
+            </li>
+            <li class="list-group-item list-group-item-light">
+              <h3>Parts of a day:</h3>
+              <div class="form-check">
+                {{ form.morning(class="form-check-input") }}
+                {{ form.morning.label(class="form-check-label") }}
+              </div>
+              <div class="form-check">
+                {{ form.midday(class="form-check-input") }}
+                {{ form.midday.label(class="form-check-label") }}
+              </div>
+
+              <div class="form-check">
+                {{ form.afternoon(class="form-check-input") }}
+                {{ form.afternoon.label(class="form-check-label") }}
+              </div>
+
+              <div class="form-check">
+                {{ form.evening(class="form-check-input") }}
+                {{ form.evening.label(class="form-check-label") }}
+              </div>
+
+              <div class="form-check">
+                {{ form.night(class="form-check-input") }}
+                {{ form.night.label(class="form-check-label") }}
+              </div>
+            </li>
+            <li class="list-group-item list-group-item-light">
+              <div class="form-group" align="center">
+                {{ form.submit(class="btn btn-md btn-primary") }}
+              </div>
+            </li>
+          </ul>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

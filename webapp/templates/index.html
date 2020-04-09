@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+{% block content %}
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-8" style="margin-top: 2rem;">
+            {% for query in twitter_queries %}
+            <div
+                class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static" style="background-color: #ffffff"> 
+                    <strong class="d-inline-block mb-2 text-primary">
+                        <div class="row">
+                            <div class="col-2">
+                                {% if query.filename[0] =='h' %}
+                                Hashtag
+                                {% elif query.filename[0] =='w'%}
+                                Word
+                                {% elif query.filename[0] =='u' %}
+                                User
+                                {% endif %}
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-1 text-muted">{{ query.created_at.strftime('%H:%M  %d/%h/%Y') }}
+                                </div>
+                            </div>
+                        </div>
+                    </strong>
+                    <h3 class="mb-0">
+                        <a href="{{ url_for('raport', query_id=query.id) }}">{{ query.twitter_query }}
+                        </a>
+                    </h3>
+                    <p class="card-text mb-auto">
+                        Collected: <b>{{ query.numbers_of_tweets }}</b>
+                        {% if query.retweet %}
+                        tweets with retweets.
+                        {% else %}
+                        tweets.
+                        {% endif %}
+                        From:
+                        <b>{{ query.from_date.strftime('%d-%m-%Y') }}</b> to:
+                        <b>{{ query.to_date.strftime('%d-%m-%Y') }}</b>
+                    </p>
+                </div>
+                <div class="col-auto d-none d-lg-block">
+                    <div class="col-md-5 themed-grid-col">
+                        <div class="row" style="margin-top: 3rem;"">
+      
+                        <div class=" col-2">
+                            <form action="{{ url_for('delete_query', query_id=query.id) }}" method="POST">
+                                <input class="btn btn-danger btn-xl" type="submit" value="Delete">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-md-4" ">
+            <div class=" content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <p class='text-muted'></p>
+            <fieldset class="form-group">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-light">
+                        <div class="form-group">
+                            {% if form.twitter_query.errors %}
+                            {{ form.twitter_query(class="form-control form-control-md is-invalid ") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.twitter_query.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.twitter_query(class="form-control form-control-md") }}
+                            {% endif %}
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    {{ form.numbers_of_tweets.label(class="form-control-label") }}
+                                    {% if form.numbers_of_tweets.errors %}
+                                    {{ form.numbers_of_tweets(class="form-control form-control-md is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.numbers_of_tweets.errors %}
+                                        <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    {{ form.numbers_of_tweets(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="form-group">
+                                    {{ form.source.label(class="form-control-label") }}
+                                    {{ form.source(class="custom-select d-block w-100") }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xl-6 ">
+                                    {{ form.from_date.label(class="form-control-label") }}
+                                    {% if form.from_date.errors %}
+                                    {{ form.from_date(class="form-control form-control-md is-invalid" ) }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.from_date.errors %}
+                                        <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    {{ form.from_date(class="form-control form-control-sm") }}
+                                    {% endif %}
+
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="form-group">
+                                        {{ form.to_date.label(class="form-control-label") }}
+                                        {% if form.to_date.errors %}
+                                        {{ form.to_date(class="form-control form-control-md is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.to_date.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form.to_date(class="form-control form-control-sm") }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                    <li class="list-group-item list-group-item-light">
+                        <div class="form-group" align="center" style="margin-bottom: 0rem;">
+                            {{ form.retweet(class="custom-control-input") }}
+                            {{ form.retweet.label(class="custom-control-label") }}
+                        </div>
+                    </li>
+                    <li class="list-group-item list-group-item-light">
+                        <div class="form-group" align="center" style="margin-bottom: 0rem;">
+                            {{ form.submit(class="btn btn-lg btn-primary ") }}
+                        </div>
+                    </li>
+                </ul>
+        </form>
+    </div>
+    </div>
+    </div>
+</main>
+{% endblock content %}

@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<main role="main" class="container" align="center">
+    <div class="jumbotron" style="width:60%; margin:0 auto;" >
+        <div class="content-section">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+                <fieldset class="form-signin">
+                    <div class="form-group" align="center">
+                        <div class="col-xl-8">
+                            {{ form.email.label(class="form-control-label") }}
+                            {% if form.email.errors %}
+                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.email(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group" align="center">
+                        <div class="col-xl-8">
+                            {{ form.password.label(class="form-control-label") }}
+                            {% if form.password.errors %}
+                            {{ form.password(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            {{ form.password(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-lg btn-primary") }}
+                </div>
+            </form>
+        </div>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Register now. <a class="ml-2" href="{{ url_for('register') }}">Sign Up</a>
+            </small>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

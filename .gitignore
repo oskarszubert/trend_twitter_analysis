@@ -1,0 +1,13 @@
+__pycache__
+collected_data
+urls
+credential.txt
+vocabulary
+plots
+dataset
+model.h5
+site.db
+dataset
+model_results.csv
+.vscode
+confusion_matrix.txt
